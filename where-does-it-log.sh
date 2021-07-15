@@ -9,7 +9,10 @@ done
 printf "\nBuilding Log Location Lists. Be Patient...\n"
 for I in $(cat CMA-IP.txt)
 do
-  mgmt_cli -d $I -r true show simple-gateways limit 500 details-level full --format json |jq --raw-output '.objects[] | (.name + "," + . "send-logs-to-server"[] + ",")' >>$CMA_NAME-gateway-logging-location.csv
+  for M in $(seq 0 50 500)
+  do
+  mgmt_cli -d $I -r true show simple-gateways limit 50 offset $M details-level full --format json |jq --raw-output '.objects[] | (.name + "," + . "send-logs-to-server"[] + ",")' >>$I-gateway-logging-location.csv
+  done
 done
 
 rm CMA-IP.txt
